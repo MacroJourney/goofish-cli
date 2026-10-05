@@ -155,10 +155,16 @@ def _bootstrap_from_browser() -> tuple[str, list[CookieRecord]]:
 
 
 def write_cookies_json(path: Path, cookies) -> None:
-    """cookies 可为 {name: value} dict 或 list[Record]。"""
+    """cookies 可为 {name: value} dict 或 list[Record]。
+
+    原子写：先写同目录 `<name>.tmp` 再 os.replace 覆盖。常驻窗口回写 / refresh /
+    auth login 可能并发写同一文件，非原子写会留下半个损坏文件。
+    """
     records = _coerce_records(cookies) if isinstance(cookies, dict) else cookies
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(encrypt_cookies(records))
+    tmp = path.parent / (path.name + ".tmp")
+    tmp.write_bytes(encrypt_cookies(records))
+    os.replace(tmp, path)
     path.chmod(0o600)
 
 

@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **常驻 Chrome 窗口**（`goofish browser open`）：`search items` / `item view` /
+  token 自动续命默认连接你的常驻窗口，在其中开新标签页干活——窗口本身不关、
+  可日常浏览使用，登录态与设备身份同源（消除临时 profile 的"半失效 session"）；
+  标签默认保留、手动关闭（`GOOFISH_KEEP_TAB=0` 恢复自动关闭）。三档降级：
+  连接 → 自动拉起 → 临时 profile 兜底；`GOOFISH_BROWSER_MODE=temp` 一键回到旧行为。
+- `cookies.json` 原子写（临时文件 + `os.replace`），常驻窗口回写与 refresh 并发安全。
+- 双栈探测：IPv4 端口被占时自动回退 IPv6 环回（`[::1]`）；拉起超时回收自己拉起的
+  Chrome 进程，避免留下不可达的孤儿窗口。
+
+### Changed
+- 扫码登录（`auth login --qr`）显式走临时 profile（常驻窗口已登录会跳过扫码）。
+- 浏览器命令结束后 best-effort 回写窗口 cookie 到 `cookies.json`（供 HTTP 直签路径复用）。
+
 ## [0.4.0] - 2026-09-07
 
 ### Added

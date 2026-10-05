@@ -84,9 +84,9 @@ async def _login_via_qr_async(timeout: int) -> list[CookieRecord]:
     # 延迟 import——单测环境没装 playwright 也能 import 本模块
     from goofish_cli.core.browser import goofish_page
 
-    # cookies={} 是关键：不传空 dict 会走 Session.load 把现有登录态灌进去，
-    # passport 就优先走"快速进入"跳过 QR，用户看不到扫码界面。
-    async with goofish_page(cookies={}) as page:
+    # cookies={} + mode="temp" 是关键：扫码必须用**干净浏览器**——常驻窗口若已登录，
+    # passport 会优先走"快速进入"跳过 QR；空 dict 则避免 Session.load 灌登录态。
+    async with goofish_page(cookies={}, mode="temp") as page:
         await page.goto(HOME_URL, wait_until="domcontentloaded")
         await page.wait_for_timeout(1500)
 
