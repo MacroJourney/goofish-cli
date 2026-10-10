@@ -56,6 +56,10 @@ _SCALAR_FIELDS = (
 #: 参与 observations 变化判定的字段。
 _OBS_FIELDS = ("price", "want_cnt", "collect_cnt", "browse_cnt", "status")
 
+#: schema 版本（写入 PRAGMA user_version）。桌面应用（Tauri）启动时校验——
+#: 版本高于其预期时提示"请更新应用"，避免字段不符导致诡异报错。变更 schema 时 +1。
+SCHEMA_VERSION = 1
+
 
 def default_db_path() -> Path:
     raw = os.environ.get("GOOFISH_COLLECT_DB")
@@ -79,7 +83,12 @@ def _is_empty(value: object) -> bool:
 
 
 class CorpusStore:
-    """采集语料库。`upsert()` 单条写入（采集器热路径），只读查询供 CLI/MCP。"""
+    """采集语料库。`upsert()` 单条写入（采集器热路径），只读查询供 CLI/MCP。
+
+    schema 版本写入 `PRAGMA user_version`（见 `SCHEMA_VERSION`）：本进程只接受
+    「版本相同」或「版本 0（旧库，升级到当前版本）」；更高版本（新库+旧工具）
+    直接拒绝，避免写坏未来 schema——桌面应用侧同样按此语义校验。
+    """
 
     def __init__(self, path: Path | None = None) -> None:
         self.path = path or default_db_path()
@@ -87,7 +96,16 @@ class CorpusStore:
         self._conn = sqlite3.connect(str(self.path))
         self._conn.row_factory = sqlite3.Row
         self._conn.execute("PRAGMA journal_mode=WAL")
+        existing = int(self._conn.execute("PRAGMA user_version").fetchone()[0])
+        if existing > SCHEMA_VERSION:
+            self._conn.close()
+            raise sqlite3.DatabaseError(
+                f"语料库 schema 版本 {existing} 高于本工具支持的 {SCHEMA_VERSION}"
+                "（请更新 goofish-cli）"
+            )
         self._conn.executescript(_SCHEMA)
+        if existing < SCHEMA_VERSION:
+            self._conn.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
         self._conn.commit()
         self.upserted = 0
 

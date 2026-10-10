@@ -238,3 +238,54 @@ def test_store_export_jsonl(store):
     assert len(content.splitlines()) == 2
     first = json.loads(content.splitlines()[0])
     assert first["item_id"] == "21"  # 最新在前
+
+
+# ── schema 版本（跨仓库契约：桌面应用启动校验用）─────────────────────────
+
+def test_store_writes_schema_version(tmp_path):
+    import sqlite3
+
+    from goofish_cli.core.collect_store import SCHEMA_VERSION
+
+    path = tmp_path / "v.db"
+    with CorpusStore(path) as store:
+        store.upsert(ParsedItem(item_id="1", title="A", source="search"))
+    conn = sqlite3.connect(path)
+    assert conn.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION
+    conn.close()
+
+
+def test_store_rejects_newer_schema_version(tmp_path):
+    import sqlite3
+
+    import pytest as _pytest
+
+    from goofish_cli.core.collect_store import SCHEMA_VERSION
+
+    path = tmp_path / "future.db"
+    conn = sqlite3.connect(path)
+    conn.execute(f"PRAGMA user_version = {SCHEMA_VERSION + 1}")
+    conn.commit()
+    conn.close()
+    with _pytest.raises(sqlite3.DatabaseError, match="高于本工具支持"):
+        CorpusStore(path)
+
+
+def test_store_upgrades_legacy_zero_version(tmp_path):
+    """旧库（user_version=0，无标记）打开时升级到当前版本，不报错。"""
+    import sqlite3
+
+    from goofish_cli.core.collect_store import SCHEMA_VERSION
+
+    path = tmp_path / "legacy.db"
+    corpus = CorpusStore(path)
+    corpus.close()
+    conn = sqlite3.connect(path)
+    conn.execute("PRAGMA user_version = 0")
+    conn.commit()
+    conn.close()
+    with CorpusStore(path) as store:
+        store.upsert(ParsedItem(item_id="1", title="A", source="search"))
+    conn = sqlite3.connect(path)
+    assert conn.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION
+    conn.close()
