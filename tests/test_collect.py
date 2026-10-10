@@ -4,6 +4,9 @@ from __future__ import annotations
 import asyncio
 import json
 from contextlib import suppress
+from pathlib import Path
+
+import pytest
 
 from goofish_cli.core.collect import (
     CdpClient,
@@ -12,6 +15,8 @@ from goofish_cli.core.collect import (
     _sanitize_filename,
     _should_capture,
 )
+
+FIXTURE_DIR = Path(__file__).parent / "fixtures" / "mtop"
 
 ALL_APIS = None
 DETAIL_URL = (
@@ -157,3 +162,22 @@ async def test_maybe_attach_dedupes_concurrent_targets():
     )
     assert client.calls.count("Target.attachToTarget") == 1
     assert client.calls.count("Network.enable") == 1
+
+
+# ── fixtures 完整性（采样裁剪产物，供解析器测试使用）─────────────────────
+
+@pytest.mark.parametrize(
+    ("name", "containers"),
+    (
+        ("search.json", ("resultList",)),
+        ("detail.json", ("itemDO", "sellerDO")),
+        ("feed.json", ("cardList",)),
+        ("recommend.json", ("cardList",)),
+    ),
+)
+def test_mtop_fixtures_are_success_envelopes(name, containers):
+    data = json.loads((FIXTURE_DIR / name).read_text(encoding="utf-8"))
+    assert data["api"].startswith("mtop.")
+    assert data["ret"][0].startswith("SUCCESS")
+    for key in containers:
+        assert key in data["data"], f"{name} 缺少容器 {key}"

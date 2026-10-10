@@ -1,0 +1,93 @@
+{
+  "api": "mtop.taobao.idle.item.web.recommend.list",
+  "v": "1.0",
+  "ret": [
+    "SUCCESS::调用成功"
+  ],
+  "data": {
+    "cardList": [
+      {
+        "cardType": 61501,
+        "cardData": {
+          "title": "为你推荐"
+        }
+      },
+      {
+        "cardType": 100005,
+        "cardData": {
+          "itemId": "1087759972043",
+          "area": "驻马店",
+          "title": "2026 生财资料合集｜第10期9月正在更新中",
+          "desc": "整理生财有术相关电子资料，内容更新至2026 年 第十期 9 月，适合对副业项目、线上业务、个人成长及实战案例感兴趣的用户学习参考。\n\n✅ 内容分类整理\n包含普通帖、精华帖、风向标及相关航海资料，方便按主题查找和阅读。\n✅ 航海资料可保存\n相关内容按资料形式整理，部分航海内容支持保存或下载，具体以实际交付内容为准。\n\n适合想了解不同项目思路、案例经验和实战方法的用户，建议结合自身情况筛选学习，不代表任何收益保证。\n\n本商品为虚拟电子资料整理服务，售出概不退货。",
+          "price": "2.88",
+          "image": {
+            "heightSize": 960,
+            "major": true,
+            "url": "http://img.alicdn.com/bao/uploaded/i2/O1CN01ODGza12ArSG17UPA_!!4611686018427382992-2-fleamarket.png",
+            "widthSize": 552
+          },
+          "targetUrl": "https://www.goofish.com/item?id=1087759972043",
+          "showVideoIcon": "false",
+          "user": {
+            "userNick": "测试卖家"
+          },
+          "fishTags": {
+            "r3": {
+              "tagList": [
+                {
+                  "data": {
+                    "type": "text",
+                    "labelId": "41",
+                    "content": "¥29.88",
+                    "isStrikeThrough": "true"
+                  }
+                },
+                {
+                  "data": {
+                    "type": "text",
+                    "labelId": "9",
+                    "content": "64人想要"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "cardType": 100005,
+        "cardData": {
+          "itemId": "1071812550817",
+          "area": "上海",
+          "title": "玩赚AI做PPT变现课程",
+          "desc": "2026年最新玩赚AI做PPT-玩赚AI做PPT课程2026从AI一键生成、优化到交付，从应用到变现；带你把 PPT 做成真正可用、可卖的商业产品 [火]拍[1]发[2]套课程【图2-8】 [红圆]26年5月13更新23节加餐课（图2） [...",
+          "price": "1",
+          "image": {
+            "heightSize": 1668,
+            "major": true,
+            "url": "http://img.alicdn.com/bao/uploaded/i4/2222275365304/O1CN01cduinNcJ4AJ2vH6K_!!4611686018427382200-0-xy_item.jpg",
+            "widthSize": 1440
+          },
+          "targetUrl": "https://www.goofish.com/item?id=1071812550817",
+          "showVideoIcon": "false",
+          "user": {
+            "userNick": "测试卖家"
+          },
+          "fishTags": {
+            "r3": {
+              "tagList": [
+                {
+                  "data": {
+                    "type": "text",
+                    "labelId": "9",
+                    "content": "37人想要"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "api": "mtop.taobao.idlehome.home.webpc.feed",
+  "v": "1.0",
+  "ret": [
+    "SUCCESS::调用成功"
+  ],
+  "data": {
+    "cardList": [
+      {
+        "cardType": 61801,
+        "cardData": {
+          "itemId": "1035955247603",
+          "bizType": "item",
+          "categoryId": 50023914,
+          "city": "广州",
+          "titleSummary": {
+            "text": "2026生财卡系统学习搞钱玩法 2026生财卡[火][火]（搞钱圈）\n想系统学习搞钱思路、项目案例、实操玩法的，这个一定"
+          },
+          "priceInfo": {
+            "oriPrice": "3695",
+            "preText": "¥",
+            "price": "8.80"
+          },
+          "mainPicInfo": {
+            "heightSize": 1365,
+            "major": true,
+            "type": 0,
+            "url": "http://img.alicdn.com/bao/uploaded/i2/2221511106481/O1CN01SbwUsM1xkM2QhU3ez_!!4611686018427387825-53-xy_item.heic",
+            "widthSize": 1024
+          },
+          "user": {
+            "userNick": "醒***子"
+          },
+          "fishTags": {
+            "r3": {
+              "tagList": [
+                {
+                  "data": {
+                    "type": "text",
+                    "labelId": "41",
+                    "content": "¥3695",
+                    "isStrikeThrough": "true"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "cardType": 61801,
+        "cardData": {
+          "itemId": "1019894680494",
+          "bizType": "item",
+          "categoryId": 50023914,
+          "city": "深圳",
+          "titleSummary": {
+            "text": "薅流简单版教程【薅流速成】《薅流简单版》绅白不白最新最全！ ①最新最全： 这是最新、最全的“薅流”教程，保证你走在最前沿"
+          },
+          "priceInfo": {
+            "oriPrice": "0.00",
+            "preText": "¥",
+            "price": "3.99"
+          },
+          "mainPicInfo": {
+            "heightSize": 720,
+            "major": true,
+            "type": 0,
+            "url": "http://img.alicdn.com/bao/uploaded/i4/O1CN01ZcU1hA1XPa36QM4GB_!!4611686018427382884-0-fleamarket.jpg",
+            "widthSize": 540
+          },
+          "user": {
+            "userNick": "全***铺"
+          },
+          "fishTags": {
+            "r3": {
+              "tagList": [
+                {
+                  "data": {
+                    "type": "text",
+                    "labelId": "9",
+                    "content": "15人想要"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}

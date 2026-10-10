@@ -1,0 +1,70 @@
+{
+  "api": "mtop.taobao.idle.pc.detail",
+  "v": "1.0",
+  "ret": [
+    "SUCCESS::调用成功"
+  ],
+  "data": {
+    "itemDO": {
+      "itemId": 859076799075,
+      "title": "包邮！EWEADN/前行者机械键盘，朋克键帽，多轴选择，办公",
+      "desc": "包邮！EWEADN/前行者机械键盘，朋克键帽，多轴选择，办公游戏全搞定～\n\n少量到货，手慢无！二手九成新，Eweand前行者 TK100。\n\n真机械轴，五种轴体任选：青轴、茶轴、红轴、黑轴、蜜粉轴。\n\n自带原装朋克打字机键帽，也可选择拼色的方键帽版本。\n\n价格已做好分类，点“立即购买”查看详情。\n\n全国包邮，新疆、西藏需提前告知补邮费哦～\n\n质保三个月，带图好评还能延保一年。\n\n如有质量问题，7天内可退换，卖家承担12元邮费。\n\n分类: 键盘 | 品牌: EWEADN/前行者 | 成色: 几乎全新 | 是否无线: 有线",
+      "soldPrice": "49",
+      "defaultPrice": false,
+      "minPrice": "49",
+      "maxPrice": "85",
+      "wantCnt": 5632,
+      "collectCnt": 2200,
+      "browseCnt": 119914,
+      "itemStatusStr": "在线",
+      "quantity": 264,
+      "gmtCreate": 1733189920000,
+      "itemLabelExtList": [
+        {
+          "propertyText": "分类",
+          "text": "键盘",
+          "labelId": "15468387"
+        },
+        {
+          "propertyText": "品牌",
+          "text": "EWEADN/前行者",
+          "labelId": "15791522"
+        }
+      ],
+      "imageInfos": [
+        {
+          "url": "http://img.alicdn.com/bao/uploaded/i3/O1CN01gFQZp21eDr7AdUeyr_!!4611686018427381598-0-fleamarket.jpg",
+          "widthSize": 1816,
+          "heightSize": 1280,
+          "major": true,
+          "type": 0
+        },
+        {
+          "url": "http://img.alicdn.com/bao/uploaded/i1/O1CN01owHnj11eDr7HjkZJz_!!4611686018427381598-0-fleamarket.jpg",
+          "widthSize": 1796,
+          "heightSize": 1279,
+          "major": false,
+          "type": 0
+        },
+        {
+          "url": "http://img.alicdn.com/bao/uploaded/i3/O1CN01oOzSl81eDr7H9qCAu_!!4611686018427381598-0-fleamarket.jpg",
+          "widthSize": 1706,
+          "heightSize": 1279,
+          "major": false,
+          "type": 0
+        }
+      ]
+    },
+    "sellerDO": {
+      "city": "郑州",
+      "publishCity": "郑州",
+      "hasSoldNumInteger": 13773,
+      "newGoodRatioRate": "93%",
+      "replyRatio24h": "88%",
+      "replyInterval": "34分钟",
+      "replyIn24hRatioDouble": 0.8832,
+      "nick": "测试卖家",
+      "sellerId": 9900000000001
+    }
+  }
+}
