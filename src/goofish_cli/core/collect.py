@@ -122,7 +122,12 @@ def _should_capture(
 
 
 def _extract_search_query(post_data: str) -> str:
-    """从 mtop 请求体提取搜索词 q（`data=<urlencoded JSON>` 形态）。"""
+    """从 mtop 请求体提取搜索词（`data=<urlencoded JSON>` 形态）。
+
+    实测（2026-10-10）：`pc.search` 的字段名是 **`keyword`**
+    （`{"pageNumber":1,"keyword":"机械键盘",...}`）；`q` 作为其它接口形态的兜底。
+    注意页面预热请求（`{"searchReqFromPage":"xyPchome"}`）不含搜索词，返回空。
+    """
     if not post_data:
         return ""
     try:
@@ -131,8 +136,11 @@ def _extract_search_query(post_data: str) -> str:
         if not payload:
             return ""
         parsed = json.loads(payload)
-        query = parsed.get("q")
-        return query if isinstance(query, str) else ""
+        for field in ("keyword", "q"):
+            value = parsed.get(field)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+        return ""
     except (ValueError, TypeError):
         return ""
 

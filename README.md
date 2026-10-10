@@ -204,7 +204,7 @@ goofish collect status
 goofish collect search "机械键盘" --price-min 20 --price-max 100
 goofish collect item 859076799075     # 全字段 + 观测历史
 goofish collect recent --limit 10
-goofish collect export --out ~/corpus.jsonl
+goofish collect export ~/corpus.jsonl     # 导出（路径为位置参数）
 ```
 
 **采集范围**（白名单制）：搜索结果 · 商品详情 · 猜你喜欢 · 首页推荐流。

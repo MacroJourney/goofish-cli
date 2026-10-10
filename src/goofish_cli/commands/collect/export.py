@@ -10,7 +10,7 @@ from goofish_cli.core import Strategy, command
 @command(
     namespace="collect",
     name="export",
-    description="导出被动采集语料为 JSONL 文件（--out 指定路径；只读本地库）",
+    description="导出被动采集语料为 JSONL 文件（路径位置参数；只读本地库）",
     strategy=Strategy.PUBLIC,
     columns=["ok", "out", "lines"],
 )

@@ -60,8 +60,15 @@ def test_should_capture_whitelist_and_deny():
 
 
 def test_extract_search_query():
-    post = "data=%7B%22q%22%3A%22%E6%AF%9B%E5%91%A2%E5%A4%A7%E8%A1%A3%22%7D"
-    assert _extract_search_query(post) == "毛呢大衣"
+    # 实测形态：pc.search 用 keyword 字段（2026-10-10 验证）
+    keyword_form = "data=%7B%22pageNumber%22%3A1%2C%22keyword%22%3A%22%E6%AF%9B%E5%91%A2%E5%A4%A7%E8%A1%A3%22%7D"
+    assert _extract_search_query(keyword_form) == "毛呢大衣"
+    # 兼容 q 字段形态
+    q_form = "data=%7B%22q%22%3A%22%E6%AF%9B%E5%91%A2%E5%A4%A7%E8%A1%A3%22%7D"
+    assert _extract_search_query(q_form) == "毛呢大衣"
+    # 页面预热请求不含搜索词 → 空
+    warmup = "data=%7B%22searchReqFromPage%22%3A%22xyPchome%22%7D"
+    assert _extract_search_query(warmup) == ""
     assert _extract_search_query("") == ""
     assert _extract_search_query("data=notjson") == ""
     assert _extract_search_query("data=%7B%22page%22%3A1%7D") == ""
