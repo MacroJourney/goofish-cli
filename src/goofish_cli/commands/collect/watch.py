@@ -29,10 +29,19 @@ def watch() -> dict[str, Any]:
     collector = Collector.from_env()
     apis = "全部（去隐私前缀）" if collector.allowed_apis is None else sorted(collector.allowed_apis)
     logger.info(
-        f"[collect] 监听中：dump={'on' if collector.dump_enabled else 'off'}，apis={apis}"
+        f"[collect] 监听中：dump={'on' if collector.dump_enabled else 'off'}，apis={apis}，"
+        f"store={'on' if collector.store is not None else 'off'}"
     )
     try:
         asyncio.run(collector.run_forever())
     except KeyboardInterrupt:
-        logger.info(f"[collect] 退出（共捕获 {collector.captured} 条）")
-    return {"ok": True, "captured": collector.captured}
+        logger.info(
+            f"[collect] 退出：捕获 {collector.captured} 条 / 提取商品 {collector.item_events} 条 / "
+            f"解析异常 {collector.parse_errors} 次"
+        )
+    return {
+        "ok": True,
+        "captured": collector.captured,
+        "items": collector.item_events,
+        "parse_errors": collector.parse_errors,
+    }

@@ -8,8 +8,7 @@
 明确不发送：Runtime.enable、Fetch.enable、Input.*、Page.navigate/reload、
 Network.setCacheDisabled（会改变缓存行为）、Network.getCookies 等一切"驱动/干预"消息。
 
-当前阶段（骨架）：连接 + 白名单过滤 + 原文落盘（采样）+ stdout JSONL 事件流。
-解析器与 SQLite 入库为下一步（方案 §5 步骤 3）。
+当前阶段：连接 + 白名单过滤 + 解析入库（SQLite）+ 原文落盘（采样）+ stdout JSONL。
 """
 from __future__ import annotations
 
@@ -31,6 +30,7 @@ from loguru import logger
 from websockets.asyncio.client import connect
 
 from goofish_cli.core.browser import _cdp_candidates
+from goofish_cli.core.collect_parsers import parse_body
 from goofish_cli.core.errors import GoofishError
 
 # ── 过滤与缓冲参数（方案 §4.4 / §4.5）────────────────────────────────────
@@ -242,10 +242,11 @@ class CdpClient:
 # ── 采集器 ───────────────────────────────────────────────────────────────
 
 class Collector:
-    """只读监听常驻窗口：发现 goofish 页面 → Network 域收响应 → 取体 → 落盘/输出。
+    """只读监听常驻窗口：发现 goofish 页面 → Network 域收响应 → 取体 → 解析入库。
 
-    `allowed_apis=None` 表示全部（仍受 DENY 前缀约束）；缺省生产用法走
-    `Collector.from_env()`（默认内置白名单，`GOOFISH_COLLECT_APIS="*"` 放开）。
+    存储为可选（`store=None` 时只输出事件流）；生产走 `Collector.from_env()`，
+    自动打开 SQLite 语料库（`GOOFISH_COLLECT_DB`）。
+    `allowed_apis=None` 表示全部（仍受 DENY 前缀约束）；缺省为内置白名单。
     """
 
     def __init__(
@@ -255,12 +256,16 @@ class Collector:
         dump_enabled: bool = False,
         dump_dir: Path | None = None,
         allowed_apis: frozenset[str] | None = None,
+        store: Any = None,
     ) -> None:
         self._sink = event_sink or _default_event_sink
         self.dump_enabled = dump_enabled
         self.dump_dir = dump_dir or _dump_dir()
         self.allowed_apis = allowed_apis
+        self.store = store
         self.captured = 0
+        self.item_events = 0
+        self.parse_errors = 0
         self._pending: dict[str, dict[str, Any]] = {}
         self._req_meta: dict[str, dict[str, Any]] = {}
         self._sessions: dict[str, str] = {}
@@ -269,10 +274,18 @@ class Collector:
 
     @classmethod
     def from_env(cls) -> Collector:
+        from goofish_cli.core.collect_store import open_store
+
+        store = None
+        try:
+            store = open_store()
+        except Exception as e:  # noqa: BLE001 — 存储不可用不阻断采集（降级为纯事件流）
+            logger.warning(f"[collect] 语料库打开失败（降级为不落库）：{e}")
         return cls(
             dump_enabled=_debug_dump_enabled(),
             dump_dir=_dump_dir(),
             allowed_apis=_capture_apis(),
+            store=store,
         )
 
     # ── 连接与重连 ───────────────────────────────────────────────────────
@@ -455,6 +468,38 @@ class Collector:
         }
         if meta.get("q"):
             event["q"] = meta["q"]
+
+        # 解析 + 入库（红线：解析器永不抛；这里再做一层兜底）
+        try:
+            kind, items = parse_body(meta["api"], body)
+        except Exception as e:  # noqa: BLE001
+            kind, items = None, []
+            self.parse_errors += 1
+            logger.debug(f"[collect] 解析异常（{meta['api']}）：{e}")
+        if kind is not None and kind.kind in ("auth", "risk"):
+            event["envelope"] = {"kind": kind.kind, "detail": kind.detail}
+            if self.store is not None:
+                with contextlib.suppress(Exception):
+                    self.store.record_risk_event(
+                        api=meta["api"], detail=kind.detail, url=meta["url"]
+                    )
+        stored = {"inserted": 0, "updated": 0}
+        if items and self.store is not None:
+            for item in items:
+                try:
+                    result_kind = self.store.upsert(item)
+                except Exception as e:  # noqa: BLE001 — 单条失败继续
+                    self.parse_errors += 1
+                    logger.debug(f"[collect] 入库失败（{item.item_id}）：{e}")
+                    continue
+                if result_kind != "skipped":
+                    stored[result_kind] += 1
+        if items:
+            self.item_events += len(items)
+            event["items"] = len(items)
+            if stored["inserted"] or stored["updated"]:
+                event["stored"] = stored
+
         if self.dump_enabled:
             event["file"] = str(self._dump(meta["api"], body))
         self._sink(event)
