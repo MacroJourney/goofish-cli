@@ -45,7 +45,9 @@
 
 ## ✨ 核心特性
 
-- 🔐 **17 个命令覆盖核心链路**：发布、下架、查询、图片上传、AI 类目识别、默认地址、IM 收发 + 会话列表、skills 安装
+- 🔐 **18 个命令覆盖核心链路**：发布、下架、查询、图片上传、AI 类目识别、默认地址、IM 收发 + 会话列表、常驻窗口、skills 安装
+- 🪟 **常驻 Chrome 窗口**：浏览器命令复用你自己的窗口（开新标签、窗口常驻），
+  登录态/设备身份与日常浏览同源；窗口关闭自动拉起，失败无缝降级临时档
 - 📡 **真·实时 IM**：WebSocket 长连 + 自动重连 + **三类事件分类输出**
   - `event=message`（收到消息）· `event=read`（已读回执）· `event=new_msg`（轻量通知）
 - 🛡 **内置风控护栏**：令牌桶限流（1 写/分钟）+ RGV587 自动熔断
@@ -168,6 +170,7 @@ $ goofish list-commands --format table
 | `message history` | 拉取会话历史消息 | ❌ |
 | `message send` | 发送文本/图片 | ✅ |
 | `message watch` | 常驻 IM 长连（JSONL 输出） | ❌ |
+| `browser open` | 打开/确认常驻 Chrome 窗口（浏览器命令共用） | ❌ |
 
 </details>
 
