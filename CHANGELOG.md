@@ -15,10 +15,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `cookies.json` 原子写（临时文件 + `os.replace`），常驻窗口回写与 refresh 并发安全。
 - 双栈探测：IPv4 端口被占时自动回退 IPv6 环回（`[::1]`）；拉起超时回收自己拉起的
   Chrome 进程，避免留下不可达的孤儿窗口。
+- **被动采集**（`goofish collect watch`）：只读监听常驻窗口里自然发生的 mtop 响应，
+  **零新增请求**——请求全部由页面自己发出（携带完整设备环境素材），采集器只经
+  CDP `Network` 域旁路读取响应体，不驱动页面、不注入脚本、不改页面 JS 上下文。
+  边浏览边积累本地语料：搜索结果 / 商品详情 / 猜你喜欢 / 首页推荐流自动结构化入库。
+  - 协议红线（白名单制）：只发 `Target.setDiscoverTargets` / `getTargets` /
+    `attachToTarget` / `Network.enable` / `Network.getResponseBody`；
+    聊天（`idlemessage.*`）与风控遥测（`gaia.*`）前缀永久排除。
+  - SQLite（WAL）语料库：`items` 主表 + `observations` 价格/热度时间序列；
+    合并语义 = 首见保留 + 非空覆盖 + 来源并集 + 观测去重。
+  - 登录失效 / RGV587 等信号只记录告警（`risk_events` 表 + JSONL 事件），
+    不做任何自动动作（过验证码留人工）。
+- **5 个采集查询命令**（全部只读本地库，不发任何请求；自动进 MCP）：
+  `collect status`（统计）· `collect search`（关键词/价格区间/来源检索）·
+  `collect item`（全字段 + 观测历史）· `collect recent` · `collect export`（JSONL）。
+- 采样开关 `GOOFISH_COLLECT_DEBUG_DUMP=1` 落原始响应（解析器开发/排障用）；
+  `GOOFISH_COLLECT_DB` / `GOOFISH_COLLECT_APIS` 可配库路径与 api 白名单。
 
 ### Changed
 - 扫码登录（`auth login --qr`）显式走临时 profile（常驻窗口已登录会跳过扫码）。
 - 浏览器命令结束后 best-effort 回写窗口 cookie 到 `cookies.json`（供 HTTP 直签路径复用）。
+
+### Notes
+- 命令总数 18 → 24。`collect watch` 是长驻监听，与前缀白名单一起构成
+  "浏览即入库"的被动语料管道；写操作与主动请求路径完全不受影响。
 
 ## [0.4.0] - 2026-09-07
 

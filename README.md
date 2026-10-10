@@ -45,11 +45,13 @@
 
 ## ✨ 核心特性
 
-- 🔐 **18 个命令覆盖核心链路**：发布、下架、查询、图片上传、AI 类目识别、默认地址、IM 收发 + 会话列表、常驻窗口、skills 安装
+- 🔐 **24 个命令覆盖核心链路**：发布、下架、查询、图片上传、AI 类目识别、默认地址、IM 收发 + 会话列表、常驻窗口、被动采集、skills 安装
 - 🪟 **常驻 Chrome 窗口**：浏览器命令复用你自己的窗口（开新标签、窗口常驻），
   登录态/设备身份与日常浏览同源；窗口关闭自动拉起，失败无缝降级临时档
 - 📡 **真·实时 IM**：WebSocket 长连 + 自动重连 + **三类事件分类输出**
   - `event=message`（收到消息）· `event=read`（已读回执）· `event=new_msg`（轻量通知）
+- 💾 **被动采集（零请求）**：只读监听常驻窗口的 mtop 响应，边浏览边把商品
+  结构化入库（SQLite + 价格/热度时间序列）；浏览即采集，不发任何新请求
 - 🛡 **内置风控护栏**：令牌桶限流（1 写/分钟）+ RGV587 自动熔断
 - 🧠 **AI-first I/O**：`--format json/yaml/table/md/csv`，给 LLM 喂 JSON、给人看表格
 - ⚡ **一次定义，三种入口**：CLI / MCP / Skill 共享同一 registry
@@ -171,7 +173,53 @@ $ goofish list-commands --format table
 | `message send` | 发送文本/图片 | ✅ |
 | `message watch` | 常驻 IM 长连（JSONL 输出） | ❌ |
 | `browser open` | 打开/确认常驻 Chrome 窗口（浏览器命令共用） | ❌ |
+| `collect watch` | 被动监听常驻窗口的 mtop 响应（只读；JSONL 事件流） | ❌ |
+| `collect status` | 采集语料库统计（条数/来源/最后捕获/风险事件） | ❌ |
+| `collect search` | 检索本地语料（关键词/价格区间/来源） | ❌ |
+| `collect item` | 单商品全字段 + 观测历史（价格/想要数走势） | ❌ |
+| `collect recent` | 最近捕获的商品 | ❌ |
+| `collect export` | 导出语料为 JSONL | ❌ |
 
+</details>
+
+<details>
+<summary><b><code>goofish collect</code></b> — 被动采集：浏览即入库（零请求）</summary>
+
+传统采集要"主动发请求"，采集器本身就是被风控识别的对象。被动采集反过来：
+**请求全部由你窗口里的页面自己发出**（真签名 + 完整设备环境），采集器只经 CDP
+`Network` 域旁路读响应——不发一个字节的新请求，服务端视角与纯人工浏览相同。
+
+```bash
+# 1. 常驻窗口在跑（goofish browser open，首次需在窗口里登录闲鱼）
+# 2. 挂上采集器（长驻，Ctrl-C 退出；它不驱动任何东西）
+goofish collect watch
+# → {"event":"listening","attached":1,...}
+# → {"event":"attached","url":"https://www.goofish.com/",...}
+
+# 3. 在窗口里正常浏览：搜几个词、点几个商品、翻翻首页推荐
+# → {"event":"captured","api":"mtop.taobao.idlemtopsearch.pc.search","items":30,"stored":{"inserted":30,"updated":0}}
+
+# 4. 语料自动积累，随时检索（只读本地库，不发请求）
+goofish collect status
+goofish collect search "机械键盘" --price-min 20 --price-max 100
+goofish collect item 859076799075     # 全字段 + 观测历史
+goofish collect recent --limit 10
+goofish collect export ~/corpus.jsonl     # 导出（路径为位置参数）
+```
+
+**采集范围**（白名单制）：搜索结果 · 商品详情 · 猜你喜欢 · 首页推荐流。
+**永久排除**：聊天/订单通信（`idlemessage.*`，他人隐私）· 风控遥测（`gaia.*`）。
+
+**协议红线**：只发 5 类 CDP 消息（`Target.setDiscoverTargets` / `getTargets` /
+`attachToTarget` / `Network.enable` / `Network.getResponseBody`），不 evaluate、
+不点击、不滚动、不注入脚本；页面 JS 上下文零改动。
+
+**风控信号只告警不动作**：窗口里出现登录失效 / RGV587 时，采集器记录到
+`risk_events` 表并在 JSONL 里给出版本告警，不做任何自动"修复"（过验证码留人工）。
+
+**合并语义**（重复浏览不膨胀）：主键 `item_id` 去重；首见时间保留、`seen_count`
+递增；新值非空才覆盖（列表页字段少、详情页字段全，越看越完整）；
+`observations` 表记录价格/想要数/浏览数变化，完全相同的连续快照自动跳过。
 </details>
 
 <details>
@@ -283,7 +331,8 @@ Claude 会自动把全部命令看成 tool：`goofish_item_get` / `goofish_item_
 | WebSocket 自动重连 | 断线自退避重连，长跑无感知 |
 | 已读回执 / typing / 新消息通知分类 | `/s/sync` 元事件结构化为三类 JSONL |
 | 全局限流 + 风控熔断 | 令牌桶 1 写/分钟 + RGV587 自动熔断 |
-| 单元测试 | 33 个，ruff 零告警 |
+| 被动采集（零请求） | CDP 只读监听 + SQLite 语料库 + 价格时间序列 |
+| 单元测试 | 296 个，ruff 零告警 |
 | 包分发 | `pip install goofish-cli` / `uvx goofish-cli` |
 
 ---
@@ -295,9 +344,11 @@ Claude 会自动把全部命令看成 tool：`goofish_item_get` / `goofish_item_
 - [x] v0.2：浏览器自动化链路（吸纳 [OpenCLI](https://github.com/jackwener/opencli) 精华）—— Playwright + 系统 Chrome 驱动 `goofish search items` / `goofish item view`，抗风控 & 完整字段
 - [x] v0.2.3 / v0.2.4：session 自动续命（passport 快速进入）+ `auth login --qr` 扫码兜底
 - [x] v0.3：Claude Skills 包装（5 个 skill：overview / risk-guard / publish-item / reply-buyer / shop-diagnosis）+ `goofish skills install`
+- [x] v0.4：常驻 Chrome 窗口（设备身份一致 + 三档降级 + 标签保留）
+- [x] v0.4：被动采集（CDP `Network` 域只读监听 → SQLite 语料库 + 5 个查询命令；
+  清零读操作的请求足迹）
 - [ ] v0.4：`goofish message create-chat`（主动与陌生用户建会话）
 - [ ] v0.4：`goofish order`（订单状态查询 / 发货）
-- [ ] v0.4：历史数据落盘（SQLite / JSONL），给 shop-diagnosis 做时序归因
 - [ ] v0.5：支持发视频消息
 
 ---
@@ -310,7 +361,7 @@ cd goofish-cli
 uv venv --python 3.11
 uv pip install -e ".[dev]"
 
-uv run pytest                # 33 测全绿
+uv run pytest                # 296 测全绿
 uv run ruff check src tests  # 零告警
 ```
 

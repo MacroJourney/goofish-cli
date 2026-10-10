@@ -1,0 +1,130 @@
+{
+  "api": "mtop.taobao.idlemtopsearch.pc.search",
+  "v": "1.0",
+  "ret": [
+    "SUCCESS::调用成功"
+  ],
+  "data": {
+    "resultList": [
+      {
+        "style": "flow",
+        "type": "DX",
+        "data": {
+          "item": {
+            "main": {
+              "exContent": {
+                "itemId": "959850333847",
+                "area": "广东",
+                "picUrl": "http://img.alicdn.com/bao/uploaded/i4/2235527238/O1CN01UCQ5yG23L3qrzo6Oe_!!4611686018427383878-0-xy_item.jpg",
+                "oriPrice": "¥99",
+                "showVideoIcon": false,
+                "detailPageType": "detailCommonBuy",
+                "price": [
+                  {
+                    "type": "sign",
+                    "text": "¥"
+                  },
+                  {
+                    "type": "integer",
+                    "text": "24"
+                  }
+                ],
+                "detailParams": {
+                  "itemId": "959850333847",
+                  "itemType": "detailCommonBuy",
+                  "soldPrice": "24",
+                  "isVideo": "false",
+                  "title": "包邮！清仓特价未拆封机械手感键盘静音电竞游戏办公电脑有线通用 接口\n\n26键无冲！悬浮按键，打字不累手腕，按压无压力，字符白色背光，时尚简约大方～科技感十足，键盘质感在线！可闭眼入～\n\n办公室宿舍游戏都可以用！轻音不扰人！字符背光白天晚上使用都超级方便！\n\n开灯按太阳键，呼吸灯按fn➕太阳键，三档亮度可调\n有视频教程，需要看敲击视频也私信小姐姐！！！\n\n紫色白色粉色蓝色键鼠套装模认搭配白色鼠标\n黑灰黑蓝光橙光彩光默认黑色鼠标\n\n有其他需求的和客服说！！！\n\n#键盘 #电脑键盘 \n\n拍下后24小时内发货！有问题可直接咨询小姐姐～#电竞电脑装备 ，#键盘 #电脑键盘",
+                  "picWidth": "1440",
+                  "picHeight": "1920",
+                  "userNick": "测试卖家"
+                },
+                "fishTags": {
+                  "r3": {
+                    "tagList": [
+                      {
+                        "data": {
+                          "type": "gradientImageText",
+                          "labelId": "749",
+                          "content": "累计降价20%"
+                        }
+                      },
+                      {
+                        "data": {
+                          "type": "text",
+                          "labelId": "9",
+                          "content": "13044人想要"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "style": "flow",
+        "type": "DX",
+        "data": {
+          "item": {
+            "main": {
+              "exContent": {
+                "itemId": "1041476356240",
+                "area": "广东",
+                "picUrl": "http://img.alicdn.com/bao/uploaded/i4/754866057/O1CN01qDzLsw1ucA6QzYSFU_!!4611686018427385737-53-xy_item.heic",
+                "showVideoIcon": false,
+                "detailPageType": "detailCommonBuy",
+                "price": [
+                  {
+                    "type": "sign",
+                    "text": "¥"
+                  },
+                  {
+                    "type": "integer",
+                    "text": "49"
+                  },
+                  {
+                    "type": "decimal",
+                    "text": ".90"
+                  }
+                ],
+                "detailParams": {
+                  "itemId": "1041476356240",
+                  "itemType": "detailCommonBuy",
+                  "soldPrice": "49.90",
+                  "isVideo": "false",
+                  "title": "全新 狼蛛S2022有线104键真机械键盘 26键无冲键盘 游戏电竞商务办公台式笔记本电脑通用  产品：全新库存工厂收回  狼蛛S2022系列 有线104键机械键盘   选颜色里面有轴体 颜色 很多 展开  工厂库存 新是新的 95成-99新 基本全新 实拍可见 非二手 功能齐全 注意！能接收才拍...",
+                  "picWidth": "1440",
+                  "picHeight": "1920",
+                  "userNick": "测试卖家"
+                },
+                "fishTags": {
+                  "r3": {
+                    "tagList": [
+                      {
+                        "data": {
+                          "type": "gradientImageText",
+                          "labelId": "749",
+                          "content": "累计降价5.10元"
+                        }
+                      },
+                      {
+                        "data": {
+                          "type": "text",
+                          "labelId": "9",
+                          "content": "244人想要"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}
